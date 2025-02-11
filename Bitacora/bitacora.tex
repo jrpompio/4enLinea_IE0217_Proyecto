@@ -83,7 +83,7 @@
 Se decidió representar el modelo mátematico del tablero de la siguiente forma:
 
 
-
+\begin{figure}[H]
 \[
 \begin{bmatrix}
 0 & 0 & 0 & 0 &  0 &  1 \\
@@ -103,6 +103,9 @@ Se decidió representar el modelo mátematico del tablero de la siguiente forma:
 \phantom{\bullet} & \phantom{\bullet} & \phantom{\bullet} & \textcolor{red}{\bullet} & \textcolor{blue}{\bullet} & \textcolor{red}{\bullet}
 \end{bmatrix}
 \]
+  \caption{Equivalencia matriz tablero}
+\end{figure}
+
 La elección de este modelo, se debe a la facilidad que presenta para implementar operaciones matriciales y métodos de verificación de estado(win, lose).
 Además que como se observa en el diagrama, la representación en colores que se escogió para el 1 es azul mientras que el -1, es rojo
 
@@ -110,5 +113,25 @@ Además que como se observa en el diagrama, la representación en colores que se
 
 Se planea usar como herramienta gráfica QT.
 Para la implementación de la matriz de menera tentativa se planea usar alguna libreria de operaciones matriciales.
+
+\section{10 de febrero}
+\subsection{Funciones}
+
+Para interactuar con el tablero(matriz) se definirán dos funciones
+\begin{itemize}
+  \item Insertar: Esta función insertará una ficha en algún elemento de la
+        primera fila.
+
+  \item Gravedad: Esta función simulará la caida de una ficha en una columna,
+        siempre y cuando debajo de esta ficha exista un campo vacio.
+\end{itemize}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{imagenes/draw.png}
+    \caption{Simulación dibujada}
+    \label{fig:draw_simulation}
+\end{figure}
+
 
 \end{document}
