@@ -45,60 +45,49 @@ public:
       cout << endl;
     }
   }
+
+  void explore(int R, int C, int dR, int dC)
+  {
+    while (R >= 0 && R <= maxR && C >= 0 && C <= maxC)
+    {
+      // acá va la función que detecta un mismo numero 4 veces
+      cout << m[R][C] << " ";
+      R += dR * -1; // se multiplica por -1 para que -1 sea sur
+      C += dC;
+    }
+    cout << endl;
+  }
+
   void exploreDirections(int R, int C)
   {
     // Convirtiendo coordenadas humanas en computacionales
     R--;
     C--;
-    cout << endl << "iniciando" << endl;
+    cout << endl
+         << "iniciando" << endl;
     // ERROR
-    if (R > maxR || C > maxC || C < 0 || R < 0)
-      return;
+    if (R > maxR || C > maxC || C < 0 || R < 0) return;
+
     // SOUTH
-    for (int i = R, j = C; i <= maxR; i++)
-    {
-      cout << m[i][j] << " ";
-    };
-    cout << endl;
+    explore(R, C, -1, 0);
 
     // WEST
-    for (int i = R, j = C; j >= 0; j--)
-    {
-      cout << m[i][j] << " ";
-    };
-    cout << endl;
+    explore(R, C, 0, -1);
+    
     // EAST
-    for (int i = R, j = C; j <= maxC; j++)
-    {
-      cout << m[i][j] << " ";
-    };
-    cout << endl;
+    explore(R, C, 0, 1);
     
-    // NORTHWESTH
-    for (int i = R, j = C; i >= 0 && j >= 0; i--, j--)
-    {
-      cout << m[i][j] << " ";
-    };
-    cout << endl;
+    // N_WESTH
+    explore(R, C, 1, -1);
     
-    // NORTHEAST
-    for (int i = R, j = C; i >= 0 && j <= maxC; i--, j++)
-    {
-      cout << m[i][j] << " ";
-    };
-    cout << endl;
-    // SOUTHWEST
-    for (int i = R, j = C; i <= maxR && j >= 0; i++, j--)
-    {
-      cout << m[i][j] << " ";
-    };
-    cout << endl;
-    // SOUTHEAST
-    for (int i = R, j = C; i <= maxR && j <= maxC; i++, j++)
-    {
-      cout << m[i][j] << " ";
-    };
-    cout << endl;
+    // N_EAST
+    explore(R, C, 1, 1);
+    
+    // S_WEST
+    explore(R, C, -1, -1);
+    
+    // S_EAST
+    explore(R, C, -1, 1);
   }
 };
 
@@ -107,7 +96,7 @@ int main()
 
   matrix7x6 mat;
   mat.printM();
-  mat.exploreDirections(1, 5);
+  mat.exploreDirections(3, 3);
 
   cout << " Esto sirve " << endl;
 
