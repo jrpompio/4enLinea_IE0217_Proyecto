@@ -6,14 +6,15 @@ using namespace std;
 class matrix7x6
 {
 private:
-  vector<vector<int>> m;
+  vector<vector<int>> table;
+  vector<int> path;
   const int maxR = 7 - 1;
   const int maxC = 6 - 1;
 
 public:
   matrix7x6()
   {
-    m = vector<vector<int>>(7, vector<int>(6, 0));
+    table = vector<vector<int>>(7, vector<int>(6, 0));
     this->fill();
   }
 
@@ -25,18 +26,19 @@ public:
         que el comportamiento sea el esperado.
     */
     int a = 0;
-    for (auto &row : m)
+    for (auto &row : table)
     {
       for (int &celda : row)
       {
-        celda = a;
+        celda = 0;
         a++;
       }
     }
   }
   void printM()
   {
-    for (const auto &row : m)
+    cout << endl;
+    for (const auto &row : table)
     {
       for (const int val : row)
       {
@@ -46,16 +48,48 @@ public:
     }
   }
 
+  void insert(int column, int player)
+  {
+    if (table[0][column] == 0)
+    {
+      table[0][column] = player;
+    }
+    gravity(column);
+  }
+
+  void gravity(int colum)
+  {
+    int row = 0;
+    int temp;
+    while (row < maxR)
+    {
+      if (table[row][colum] != 0 && table[row + 1][colum] == 0)
+      {
+        // this->printM();  
+        // swap de valores
+        temp = table[row][colum];
+        table[row][colum] = table[row+1][colum];
+        table[row+1][colum] = temp;
+      }
+      row++;
+    }
+  }
+
   void explore(int R, int C, int dR, int dC)
   {
+    path.clear();
     while (R >= 0 && R <= maxR && C >= 0 && C <= maxC)
     {
       // acá va la función que detecta un mismo numero 4 veces
-      cout << m[R][C] << " ";
+      path.push_back(table[R][C]);
       R += dR * -1; // se multiplica por -1 para que -1 sea sur
       C += dC;
     }
-    cout << endl;
+    // Solo se revisan los primeros 4 elementos
+    if (path.size() > 3 && path[0] == path[1] && path[1] == path[2] && path[2] == path[3])
+    {
+      cout << "todos iguales" << endl;
+    }
   }
 
   void exploreDirections(int R, int C)
@@ -66,26 +100,27 @@ public:
     cout << endl
          << "iniciando" << endl;
     // ERROR
-    if (R > maxR || C > maxC || C < 0 || R < 0) return;
+    if (R > maxR || C > maxC || C < 0 || R < 0)
+      return;
 
     // SOUTH
     explore(R, C, -1, 0);
 
     // WEST
     explore(R, C, 0, -1);
-    
+
     // EAST
     explore(R, C, 0, 1);
-    
+
     // N_WESTH
     explore(R, C, 1, -1);
-    
+
     // N_EAST
     explore(R, C, 1, 1);
-    
+
     // S_WEST
     explore(R, C, -1, -1);
-    
+
     // S_EAST
     explore(R, C, -1, 1);
   }
@@ -96,7 +131,10 @@ int main()
 
   matrix7x6 mat;
   mat.printM();
-  mat.exploreDirections(3, 3);
+  // mat.exploreDirections(1, 3);
+  mat.insert(0, -1);
+  
+  mat.printM();
 
   cout << " Esto sirve " << endl;
 
