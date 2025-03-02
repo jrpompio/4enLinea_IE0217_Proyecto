@@ -48,31 +48,38 @@ public:
     }
   }
 
-  void insert(int column, int player)
+  bool insert(int column, int player)
   {
     if (table[0][column] == 0)
     {
       table[0][column] = player;
-    }
-    gravity(column);
+      return true;
+    } else return false;
   }
 
-  void gravity(int colum)
+  int gravity(int colum)
   {
     int row = 0;
     int temp;
+    bool swap;
+    int last;
     while (row < maxR)
     {
+      swap = false;
       if (table[row][colum] != 0 && table[row + 1][colum] == 0)
       {
         // this->printM();  
         // swap de valores
         temp = table[row][colum];
-        table[row][colum] = table[row+1][colum];
-        table[row+1][colum] = temp;
+        table[row][colum] = table[row + 1][colum];
+        table[row +1 ][colum] = temp;
+        swap = true;
       }
+      if (swap) {last = row + 1;}
+      else {last = row; break;}
       row++;
     }
+    return last;
   }
 
   void explore(int R, int C, int dR, int dC)
