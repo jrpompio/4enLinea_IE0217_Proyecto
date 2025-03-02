@@ -89,11 +89,11 @@ public:
     {
       // acá va la función que detecta un mismo numero 4 veces
       path.push_back(table[R][C]);
-      R += dR * -1; // se multiplica por -1 para que -1 sea sur
+      R += dR ; // se multiplica por -1 para que -1 sea sur
       C += dC;
     }
     // Solo se revisan los primeros 4 elementos
-    if (path.size() > 3 && path[0] == path[1] && path[1] == path[2] && path[2] == path[3])
+    if (path.size() > 3 && path[0] == path[1] && path[1] == path[2] && path[2] == path[3] && path[0] != 0)
     {
       cout << "todos iguales" << endl;
       return true;
@@ -101,25 +101,22 @@ public:
     return false;
   }
 
-  bool exploreDirections(int R, int C)
+  bool exploreDirections(int C, int R)
   {
-    // Convirtiendo coordenadas humanas en computacionales
-    R--;
-    C--;
-    cout << endl
-         << "iniciando" << endl;
     // ERROR
-    if (R > maxR || C > maxC || C < 0 || R < 0)
-      return;
+    // if (R > maxR || C > maxC || C < 0 || R < 0)
+    //  return;
 
-    if (explore(R, C, -1, 0) ||   // SOUTH
+    if (explore(R, C, 1, 0) ||   // SOUTH
         explore(R, C, 0, -1) ||   // WEST
         explore(R, C, 0, 1)  ||   // EAST
-        explore(R, C, 1, -1) ||   // N_WESTH
-        explore(R, C, 1, 1)  ||   // N_EAST
-        explore(R, C, -1, -1)||   // S_WEST
-        explore(R, C, -1, 1) ||   // S_EAST
-       ) {return true}
+        explore(R, C, -1, -1) ||   // N_WESTH
+        explore(R, C, -1, 1)  ||   // N_EAST
+        explore(R, C, 1, -1)||   // S_WEST
+        explore(R, C, 1, 1) ||   // S_EAST
+       ){
+        return true;
+        } else {return false;}
     
   }
 };
