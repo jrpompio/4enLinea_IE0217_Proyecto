@@ -1,30 +1,32 @@
 #include <iostream>
 #include <vector>
 #include <iomanip>
+#include <fstream>
+
 using namespace std;
 
-class matrix7x6
+class Matrix6x7
 {
 private:
   vector<vector<int>> table;
   vector<int> path;
-  const int maxR = 7 - 1;
-  const int maxC = 6 - 1;
+  const int maxR = 6 - 1;
+  const int maxC = 7 - 1;
 
 public:
-  matrix7x6()
+  Matrix6x7()
   {
-    table = vector<vector<int>>(7, vector<int>(6, 0));
+    table = vector<vector<int>>(6, vector<int>(7, 0));
     this->fill();
   }
 
   void fill()
   {
     /*  Este metodo es solo para desarrollo
-        la matriz debe iniciar en cero todos sus valores
-        pero se rellenan los valores para verificar
-        que el comportamiento sea el esperado.
-    */
+     *        la matriz debe iniciar en cero todos sus valores
+     *        pero se rellenan los valores para verificar
+     *        que el comportamiento sea el esperado.
+     */
     int a = 0;
     for (auto &row : table)
     {
@@ -68,7 +70,7 @@ public:
       swap = false;
       if (table[row][colum] != 0 && table[row + 1][colum] == 0)
       {
-        // this->printM();  
+        // this->printM();
         // swap de valores
         temp = table[row][colum];
         table[row][colum] = table[row + 1][colum];
@@ -89,13 +91,13 @@ public:
     {
       // acá va la función que detecta un mismo numero 4 veces
       path.push_back(table[R][C]);
-      R += dR ; // se multiplica por -1 para que -1 sea sur
+      R += dR ;
       C += dC;
     }
     // Solo se revisan los primeros 4 elementos
     if (path.size() > 3 && path[0] == path[1] && path[1] == path[2] && path[2] == path[3] && path[0] != 0)
     {
-      cout << "todos iguales" << endl;
+      // cout << "todos iguales" << endl;
       return true;
     }
     return false;
@@ -108,30 +110,65 @@ public:
     //  return;
 
     if (explore(R, C, 1, 0) ||   // SOUTH
-        explore(R, C, 0, -1) ||   // WEST
-        explore(R, C, 0, 1)  ||   // EAST
-        explore(R, C, -1, -1) ||   // N_WESTH
-        explore(R, C, -1, 1)  ||   // N_EAST
-        explore(R, C, 1, -1)||   // S_WEST
-        explore(R, C, 1, 1) ||   // S_EAST
-       ){
-        return true;
-        } else {return false;}
-    
+      explore(R, C, 0, -1) ||   // WEST
+      explore(R, C, 0, 1)  ||   // EAST
+      explore(R, C, -1, -1) ||   // N_WESTH
+      explore(R, C, -1, 1)  ||   // N_EAST
+      explore(R, C, 1, -1)||   // S_WEST
+      explore(R, C, 1, 1)   // S_EAST
+    ){
+      return true;
+    } else {return false;}
+
+  }
+};
+
+class SaveLoad{
+public:
+  void save(){
+
   }
 };
 
 int main()
 {
-
-  matrix7x6 mat;
+  int lastRow;
+  bool win;
+  Matrix6x7 mat;
   mat.printM();
-  // mat.exploreDirections(1, 3);
+
   mat.insert(0, -1);
-  
-  mat.printM();
+  lastRow = mat.gravity(0);
+  win = mat.exploreDirections(0, lastRow);
+  cout << " win = " << win << endl;
 
-  cout << " Esto sirve " << endl;
+  mat.insert(0, -1);
+  lastRow = mat.gravity(0);
+  win = mat.exploreDirections(0, lastRow);
+  cout << " win = " << win << endl;
+
+  mat.insert(0, 1);
+  lastRow = mat.gravity(0);
+  win = mat.exploreDirections(0, lastRow);
+  cout << " win = " << win << endl;
+
+  mat.insert(0, 1);
+  lastRow = mat.gravity(0);
+  win = mat.exploreDirections(0, lastRow);
+  cout << " win = " << win << endl;
+
+  mat.insert(0, 1);
+  lastRow = mat.gravity(0);
+  win = mat.exploreDirections(0, lastRow);
+  cout << " win = " << win << endl;
+
+  mat.insert(0, 1);
+  lastRow = mat.gravity(0);
+  win = mat.exploreDirections(0, lastRow);
+  cout << " win = " << win << endl;
+
+
+  mat.printM();
 
   return 0;
 }
