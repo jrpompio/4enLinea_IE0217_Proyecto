@@ -75,7 +75,7 @@ public:
     }
   }
 
-  void explore(int R, int C, int dR, int dC)
+  bool explore(int R, int C, int dR, int dC)
   {
     path.clear();
     while (R >= 0 && R <= maxR && C >= 0 && C <= maxC)
@@ -89,10 +89,12 @@ public:
     if (path.size() > 3 && path[0] == path[1] && path[1] == path[2] && path[2] == path[3])
     {
       cout << "todos iguales" << endl;
+      return true;
     }
+    return false;
   }
 
-  void exploreDirections(int R, int C)
+  bool exploreDirections(int R, int C)
   {
     // Convirtiendo coordenadas humanas en computacionales
     R--;
@@ -103,26 +105,15 @@ public:
     if (R > maxR || C > maxC || C < 0 || R < 0)
       return;
 
-    // SOUTH
-    explore(R, C, -1, 0);
-
-    // WEST
-    explore(R, C, 0, -1);
-
-    // EAST
-    explore(R, C, 0, 1);
-
-    // N_WESTH
-    explore(R, C, 1, -1);
-
-    // N_EAST
-    explore(R, C, 1, 1);
-
-    // S_WEST
-    explore(R, C, -1, -1);
-
-    // S_EAST
-    explore(R, C, -1, 1);
+    if (explore(R, C, -1, 0) ||   // SOUTH
+        explore(R, C, 0, -1) ||   // WEST
+        explore(R, C, 0, 1)  ||   // EAST
+        explore(R, C, 1, -1) ||   // N_WESTH
+        explore(R, C, 1, 1)  ||   // N_EAST
+        explore(R, C, -1, -1)||   // S_WEST
+        explore(R, C, -1, 1) ||   // S_EAST
+       ) {return true}
+    
   }
 };
 
