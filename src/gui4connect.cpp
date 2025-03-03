@@ -169,6 +169,8 @@ gboolean GameWindow::drop_timer_callback(gpointer data) {
                                                          GTK_MESSAGE_INFO,
                                                          GTK_BUTTONS_OK,
                                                          "¡Ganaron las fichas %s!", color);
+            self->get_game().fill();
+            self->getSaveLoad()->restart();                   
             gtk_dialog_run(GTK_DIALOG(dialog));
             gtk_widget_destroy(dialog);
             for (int col = 0; col < 7; col++) {
