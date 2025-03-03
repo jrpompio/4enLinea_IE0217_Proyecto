@@ -23,10 +23,10 @@ public:
   void fill()
   {
     /*  Este metodo es solo para desarrollo
-     *        la matriz debe iniciar en cero todos sus valores
-     *        pero se rellenan los valores para verificar
-     *        que el comportamiento sea el esperado.
-     */
+        la matriz debe iniciar en cero todos sus valores
+        pero se rellenan los valores para verificar
+        que el comportamiento sea el esperado.
+    */
     int a = 0;
     for (auto &row : table)
     {
@@ -70,7 +70,7 @@ public:
       swap = false;
       if (table[row][colum] != 0 && table[row + 1][colum] == 0)
       {
-        // this->printM();
+        // this->printM();  
         // swap de valores
         temp = table[row][colum];
         table[row][colum] = table[row + 1][colum];
@@ -110,23 +110,23 @@ public:
     //  return;
 
     if (explore(R, C, 1, 0) ||   // SOUTH
-      explore(R, C, 0, -1) ||   // WEST
-      explore(R, C, 0, 1)  ||   // EAST
-      explore(R, C, -1, -1) ||   // N_WESTH
-      explore(R, C, -1, 1)  ||   // N_EAST
-      explore(R, C, 1, -1)||   // S_WEST
-      explore(R, C, 1, 1)   // S_EAST
-    ){
-      return true;
-    } else {return false;}
-
+        explore(R, C, 0, -1) ||   // WEST
+        explore(R, C, 0, 1)  ||   // EAST
+        explore(R, C, -1, -1) ||   // N_WESTH
+        explore(R, C, -1, 1)  ||   // N_EAST
+        explore(R, C, 1, -1)||   // S_WEST
+        explore(R, C, 1, 1)   // S_EAST
+       ){
+        return true;
+        } else {return false;}
+    
   }
 };
 
 class SaveLoad{
-public:
+  public:
   void save(){
-
+    
   }
 };
 
@@ -141,32 +141,32 @@ int main()
   lastRow = mat.gravity(0);
   win = mat.exploreDirections(0, lastRow);
   cout << " win = " << win << endl;
-
+  
   mat.insert(0, -1);
   lastRow = mat.gravity(0);
   win = mat.exploreDirections(0, lastRow);
   cout << " win = " << win << endl;
-
+  
   mat.insert(0, 1);
   lastRow = mat.gravity(0);
   win = mat.exploreDirections(0, lastRow);
   cout << " win = " << win << endl;
-
+  
   mat.insert(0, 1);
   lastRow = mat.gravity(0);
   win = mat.exploreDirections(0, lastRow);
   cout << " win = " << win << endl;
-
+  
   mat.insert(0, 1);
   lastRow = mat.gravity(0);
   win = mat.exploreDirections(0, lastRow);
   cout << " win = " << win << endl;
-
+  
   mat.insert(0, 1);
   lastRow = mat.gravity(0);
   win = mat.exploreDirections(0, lastRow);
   cout << " win = " << win << endl;
-
+  
 
   mat.printM();
 
