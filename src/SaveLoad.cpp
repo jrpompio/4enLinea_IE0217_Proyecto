@@ -68,10 +68,12 @@ void SaveLoad::load() {
         int move = movimientos[i];
         int jugador = (move >> 3);
         int columna = move & 0x07;
+        
         if (jugador ==0 ){
             jugador = 1;} 
         else {
             jugador = -1;}
+        
         game->insert(columna, jugador);
         game->gravity(columna);
         game->gravity(columna);
