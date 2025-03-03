@@ -1,6 +1,9 @@
 #include "gui4connect.hpp"
 #include <gtk/gtk.h>
 #include <string>
+#include <iostream>
+
+using namespace std;
 
 // ========================
 // Callback de dibujo para cada celda
@@ -131,10 +134,11 @@ void GameWindow::update_board() {
 gboolean GameWindow::drop_timer_callback(gpointer data) {
     GameWindow *self = static_cast<GameWindow*>(data);
     int new_row = self->get_game().gravity(self->drop_column);
+
     if(new_row == self->falling_row) {
         self->animating = false;
         self->drop_timer_id = 0;
-        if(self->get_game().exploreDirections(self->drop_column, self->falling_row)) {
+        if(self->get_game().exploreDirections(self->drop_column)) {
             const char *color = (self->drop_player == 1) ? "Azules" : "Rojas";
             GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(self->window),
                                                          GTK_DIALOG_DESTROY_WITH_PARENT,
@@ -164,6 +168,8 @@ gboolean GameWindow::drop_timer_callback(gpointer data) {
 }
 
 void GameWindow::drop_piece(int column, int player) {
+    cout << " se insertó en columna = " << column << endl;
+
     if(animating)
         return;
     for (int col = 0; col < 7; col++){

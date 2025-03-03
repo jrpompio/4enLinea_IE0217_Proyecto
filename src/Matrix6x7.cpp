@@ -37,6 +37,8 @@ int Matrix6x7::gravity(int col) {
     return 6 - 1;
 }
 
+
+
 bool Matrix6x7::explore(int R, int C, int dR, int dC) {
     path.clear();
     while (R >= 0 && R < 6 && C >= 0 && C < 7) {
@@ -51,14 +53,24 @@ bool Matrix6x7::explore(int R, int C, int dR, int dC) {
     return false;
 }
 
-bool Matrix6x7::exploreDirections(int col, int row) {
-    if (explore(row, col, 1, 0)   ||  // Vertical (hacia abajo)
-        explore(row, col, 0, -1)  ||  // Horizontal (izquierda)
-        explore(row, col, 0, 1)   ||  // Horizontal (derecha)
-        explore(row, col, -1, -1) ||  // Diagonal (arriba-izquierda)
-        explore(row, col, -1, 1)  ||  // Diagonal (arriba-derecha)
-        explore(row, col, 1, -1)  ||  // Diagonal (abajo-izquierda)
-        explore(row, col, 1, 1))       // Diagonal (abajo-derecha)
-        return true;
+bool Matrix6x7::exploreDirections(int col) {
+    // Se recorre la columna desde la fila 0 hasta la última (6 filas: 0 a 5)
+    for (int row = 0; row < 6; row++) {
+        // Si la celda está vacía, se omite
+        if (table[row][col] == 0)
+            continue;
+        // Si en alguna dirección se encuentra 4 fichas consecutivas, se retorna true.
+        if (explore(row, col, 1, 0)   ||  // Vertical (hacia abajo)
+            explore(row, col, 0, -1)  ||  // Horizontal (izquierda)
+            explore(row, col, 0, 1)   ||  // Horizontal (derecha)
+            explore(row, col, -1, -1) ||  // Diagonal (arriba-izquierda)
+            explore(row, col, -1, 1)  ||  // Diagonal (arriba-derecha)
+            explore(row, col, 1, -1)  ||  // Diagonal (abajo-izquierda)
+            explore(row, col, 1, 1))       // Diagonal (abajo-derecha)
+        {
+            return true;
+        }
+    }
     return false;
 }
+
