@@ -4,87 +4,87 @@
 #include <gtk/gtk.h>
 #include <string>
 #include <vector>
-#include "Matrix6x7.hpp"
-#include "bot.hpp"  // Se incluye para integrar el bot
+#include "Matrix6x7.hpp"   // Se requiere para la definición de la matriz del juego
+#include "bot.hpp"         // Para el Bot
+#include "SaveLoad.hpp"    // Para SaveLoad
 
 using namespace std;
 
-// Estructura para la información de cada celda (área de dibujo)
+// Estructura para almacenar los datos de cada celda (usada en el callback de dibujo)
 struct CellData {
     int row;
     int col;
 };
 
-// Declaración adelantada del callback de dibujo
-gboolean draw_cell_callback(GtkWidget *widget, cairo_t *cr, gpointer data);
-
-// Clase que maneja la interfaz gráfica del juego (4 en Línea)
 class GameWindow {
 public:
     GameWindow();
     ~GameWindow();
 
-    // Método para acceder a la lógica del juego
+    // Devuelve una referencia a la matriz del juego
     Matrix6x7& get_game();
 
-    // Nuevo método para establecer el modo de juego:
-    // 0: 1 vs 1, 1: 1 vs bot (jugada aleatoria), 2: 1 vs AI (jugada inteligente)
-    void setGameMode(int mode);
-
-private:
-    GtkWidget *window;       // Ventana principal del juego
-    GtkWidget *grid;         // Grid que contiene las celdas del tablero
-    GtkWidget *hbox_buttons; // Contenedor horizontal para los botones (arriba)
-    GtkWidget *column_buttons[7]; // Botón por cada columna
-    GtkWidget *cells[6][7];  // Áreas de dibujo para cada celda
-
-    // Arreglo de información de cada celda (para el callback de dibujo)
-    CellData *cell_data[6][7];
-
-    // Lógica del juego
-    Matrix6x7 game;
-
-    // Variables de control del turno y animación
-    int current_player;
-    int drop_column;         // Columna en la que se inserta la ficha
-    int falling_row;         // Fila actual de la ficha en caída
-    int drop_player;         // Jugador que lanzó la ficha
-    guint drop_timer_id;     // ID del timer para la animación
-    bool animating;          // Indica si se está animando la caída
-
-    // Miembros nuevos para integrar el Bot
-    Bot* bot;                // Objeto Bot para la jugada automática
-    // Variable para indicar el modo de juego:
-    // 0: 1 vs 1, 1: 1 vs bot (random), 2: 1 vs AI (inteligente)
-    int game_mode;
-
-    // Métodos internos
-    static gboolean drop_timer_callback(gpointer data);
+    // Actualiza el tablero (redibuja todas las celdas)
     void update_board();
-    void drop_piece(int column, int player);
+
+    // Maneja el clic en un botón de columna
     void on_button_column_clicked(int col);
 
-    // Método para ejecutar la jugada del bot (se invoca tras la jugada del jugador)
+    // Inserta la ficha en la columna indicada para el jugador (llama a drop_piece)
+    void drop_piece(int column, int player);
+
+    // Establece el modo de juego:
+    // 0: 1 vs 1, 1: 1 vs Bot, 2: 1 vs AI
+    void setGameMode(int mode);
+
+    // Ejecuta la jugada del bot cuando es su turno
     void performBotMove();
 
-    // Permitir que el callback de dibujo acceda a la instancia
-    friend gboolean draw_cell_callback(GtkWidget *widget, cairo_t *cr, gpointer data);
+    // Setter para current_player (para ajustar turno tras cargar partida)
+    void setCurrentPlayer(int player);
+
+    // Getter para acceder a la instancia de SaveLoad
+    SaveLoad* getSaveLoad();
+
+    // Callback para la animación de caída de ficha (método estático)
+    static gboolean drop_timer_callback(gpointer data);
+
+private:
+    GtkWidget* window;
+    GtkWidget* grid;
+    GtkWidget* hbox_buttons;
+    GtkWidget* column_buttons[7];
+    GtkWidget* cells[6][7];
+    CellData* cell_data[6][7];
+
+    int current_player;   // 1 para azul, -1 para rojo
+    int drop_timer_id;
+    bool animating;
+    int falling_row;
+    int drop_player;
+    int drop_column;
+    int game_mode;        // 0: 1 vs 1, 1: 1 vs Bot, 2: 1 vs AI
+
+    Matrix6x7 game;       // Instancia de la matriz del juego
+    Bot* bot;             // Puntero al Bot (si se usa)
+    SaveLoad* saveload;   // Puntero al SaveLoad para guardar/cargar la partida
 };
 
-// Clase para el menú principal de la aplicación
 class MenuWindow {
 public:
     MenuWindow();
     ~MenuWindow();
-private:
-    GtkWidget *window; // Ventana principal del menú
-    GtkWidget *vbox;   // Contenedor vertical para los botones
-    GtkWidget *btnCargar;
-    GtkWidget *btn1vs1;
-    GtkWidget *btn1vsBot;
-    GtkWidget *btn1vsAI;
 
-    static void on_menu_button_clicked(GtkWidget *widget, gpointer data);
+    // Callback para los botones del menú
+    static void on_menu_button_clicked(GtkWidget* widget, gpointer data);
+
+private:
+    GtkWidget* window;
+    GtkWidget* vbox;
+    GtkWidget* btnCargar;
+    GtkWidget* btn1vs1;
+    GtkWidget* btn1vsBot;
+    GtkWidget* btn1vsAI;
 };
 
 #endif // GUI4CONNECT_HPP
