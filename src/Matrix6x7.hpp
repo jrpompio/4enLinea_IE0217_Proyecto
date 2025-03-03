@@ -5,7 +5,7 @@
 using namespace std;
 
 class Matrix6x7 {
-private:
+protected:
     vector<vector<int>> table;
     vector<int> path;
     const int maxR = 6 - 1;

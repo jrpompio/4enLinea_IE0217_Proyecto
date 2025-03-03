@@ -1,7 +1,9 @@
 #include "gui4connect.hpp"
+#include "bot.hpp"      // Se incluye para integrar el Bot
 #include <gtk/gtk.h>
 #include <string>
 #include <iostream>
+#include <cstdlib>
 
 using namespace std;
 
@@ -49,7 +51,8 @@ gboolean draw_cell_callback(GtkWidget *widget, cairo_t *cr, gpointer data) {
 // Implementación de GameWindow
 // ========================
 GameWindow::GameWindow() : current_player(1), drop_timer_id(0),
-                           animating(false), falling_row(0), drop_player(0) {
+                           animating(false), falling_row(0), drop_player(0),
+                           bot(nullptr), game_mode(0) {  // Por defecto modo 1 vs 1
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "4 en Línea - 1 vs 1");
     gtk_container_set_border_width(GTK_CONTAINER(window), 10);
@@ -115,6 +118,8 @@ GameWindow::~GameWindow() {
             delete cell_data[i][j];
         }
     }
+    if(bot)
+        delete bot;
 }
 
 Matrix6x7& GameWindow::get_game() {
@@ -131,6 +136,7 @@ void GameWindow::update_board() {
         gtk_main_iteration();
 }
 
+// Callback para la animación de caída de ficha
 gboolean GameWindow::drop_timer_callback(gpointer data) {
     GameWindow *self = static_cast<GameWindow*>(data);
     int new_row = self->get_game().gravity(self->drop_column);
@@ -159,6 +165,15 @@ gboolean GameWindow::drop_timer_callback(gpointer data) {
                     gtk_widget_set_sensitive(self->column_buttons[col], FALSE);
             }
         }
+        // Si el modo es 1 vs Bot o 1 vs AI y es turno del bot, ejecuta su jugada.
+        if(self->game_mode != 0 && self->current_player == -1) {
+            // Se programa la jugada del bot en idle para que se ejecute después de finalizar la animación.
+            g_idle_add([](gpointer data) -> gboolean {
+                GameWindow *gw = static_cast<GameWindow*>(data);
+                gw->performBotMove();
+                return FALSE;
+            }, self);
+        }
         return FALSE;
     } else {
         self->falling_row = new_row;
@@ -167,8 +182,9 @@ gboolean GameWindow::drop_timer_callback(gpointer data) {
     }
 }
 
+// Inserta la ficha en la columna indicada para el jugador indicado
 void GameWindow::drop_piece(int column, int player) {
-    cout << " se insertó en columna = " << column << endl;
+    cout << "Se insertó en columna = " << column << endl;
 
     if(animating)
         return;
@@ -192,9 +208,47 @@ void GameWindow::drop_piece(int column, int player) {
     }
 }
 
+// Al presionar un botón de columna, se inserta la ficha del jugador.
+// En modo 1 vs 1 se alterna el turno; en modos con bot, tras la jugada del jugador el turno pasa al bot.
 void GameWindow::on_button_column_clicked(int col) {
     drop_piece(col, current_player);
     current_player = -current_player;
+}
+
+// Método para establecer el modo de juego
+// mode: 0 = 1 vs 1, 1 = 1 vs Bot (random), 2 = 1 vs AI (inteligente)
+void GameWindow::setGameMode(int mode) {
+    game_mode = mode;
+    if(mode == 0)
+         gtk_window_set_title(GTK_WINDOW(window), "4 en Línea - 1 vs 1");
+    else if(mode == 1)
+         gtk_window_set_title(GTK_WINDOW(window), "4 en Línea - 1 vs Bot");
+    else if(mode == 2)
+         gtk_window_set_title(GTK_WINDOW(window), "4 en Línea - 1 vs AI");
+    // Si se usa un modo con bot, se instancia el objeto Bot
+    if(mode != 0) {
+        if(bot)
+            delete bot;
+        bot = new Bot(game);
+    }
+}
+
+// Método que ejecuta la jugada del bot cuando es su turno.
+// Actualiza la copia interna del Bot y, según el modo, usa randomColumn o botMove.
+void GameWindow::performBotMove() {
+    if(!bot)
+        return;
+    bot->updateMatrix(game);
+    int bot_column = -1;
+    if(game_mode == 1) { // 1 vs Bot: jugada aleatoria
+        bot_column = bot->randomColumn();
+    } else if(game_mode == 2) { // 1 vs AI: jugada inteligente
+        bot_column = bot->botMove();
+    }
+    if(bot_column != -1) {
+        drop_piece(bot_column, current_player);
+        current_player = -current_player;
+    }
 }
 
 // ========================
@@ -228,6 +282,7 @@ MenuWindow::MenuWindow() {
     gtk_widget_show_all(window);
 }
 
+
 MenuWindow::~MenuWindow() {
     // Liberar recursos si es necesario
 }
@@ -235,9 +290,19 @@ MenuWindow::~MenuWindow() {
 void MenuWindow::on_menu_button_clicked(GtkWidget *widget, gpointer data) {
     MenuWindow *menu = static_cast<MenuWindow*>(data);
     const gchar *label = gtk_button_get_label(GTK_BUTTON(widget));
+    GameWindow *gw = nullptr;
     if(g_strcmp0(label, "1 vs 1") == 0) {
         gtk_widget_hide(menu->window);
-        new GameWindow(); // Lanza el juego en modo 1 vs 1
+        gw = new GameWindow();
+        gw->setGameMode(0);
+    } else if(g_strcmp0(label, "1 vs Bot") == 0) {
+        gtk_widget_hide(menu->window);
+        gw = new GameWindow();
+        gw->setGameMode(1);
+    } else if(g_strcmp0(label, "1 vs AI") == 0) {
+        gtk_widget_hide(menu->window);
+        gw = new GameWindow();
+        gw->setGameMode(2);
     } else {
         GtkWidget *dialog = gtk_message_dialog_new(GTK_WINDOW(menu->window),
                                                      GTK_DIALOG_DESTROY_WITH_PARENT,

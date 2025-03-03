@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include "Matrix6x7.hpp"
+#include "bot.hpp"  // Se incluye para integrar el bot
 
 using namespace std;
 
@@ -22,8 +23,14 @@ class GameWindow {
 public:
     GameWindow();
     ~GameWindow();
+
     // Método para acceder a la lógica del juego
     Matrix6x7& get_game();
+
+    // Nuevo método para establecer el modo de juego:
+    // 0: 1 vs 1, 1: 1 vs bot (jugada aleatoria), 2: 1 vs AI (jugada inteligente)
+    void setGameMode(int mode);
+
 private:
     GtkWidget *window;       // Ventana principal del juego
     GtkWidget *grid;         // Grid que contiene las celdas del tablero
@@ -45,11 +52,20 @@ private:
     guint drop_timer_id;     // ID del timer para la animación
     bool animating;          // Indica si se está animando la caída
 
+    // Miembros nuevos para integrar el Bot
+    Bot* bot;                // Objeto Bot para la jugada automática
+    // Variable para indicar el modo de juego:
+    // 0: 1 vs 1, 1: 1 vs bot (random), 2: 1 vs AI (inteligente)
+    int game_mode;
+
     // Métodos internos
     static gboolean drop_timer_callback(gpointer data);
     void update_board();
     void drop_piece(int column, int player);
     void on_button_column_clicked(int col);
+
+    // Método para ejecutar la jugada del bot (se invoca tras la jugada del jugador)
+    void performBotMove();
 
     // Permitir que el callback de dibujo acceda a la instancia
     friend gboolean draw_cell_callback(GtkWidget *widget, cairo_t *cr, gpointer data);
